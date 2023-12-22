@@ -1,5 +1,5 @@
 import React from 'react'
 
-export default function ClaimUserNameForm() {
-  return <div>ClaimUserNameForm</div>
+export default function ClaimUsernameForm() {
+  return <div>n</div>
 }
