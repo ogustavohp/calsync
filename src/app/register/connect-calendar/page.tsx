@@ -2,7 +2,7 @@
 import MultiStep from '@/components/MultiStep'
 import { ArrowRight, Check } from 'lucide-react'
 import { signIn, useSession } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 export default function ConnectCalendar() {
@@ -10,9 +10,15 @@ export default function ConnectCalendar() {
   const params = useSearchParams()
   const hasAuthError = !!params.get('error')
   const isSignedIn = session.status === 'authenticated'
+  const router = useRouter()
 
   async function handleConnectCalendar() {
     await signIn('google', { callbackUrl: '/register/connect-calendar' })
+  }
+
+  async function nextPage(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.preventDefault()
+    await router.push('/register/time-intervals')
   }
 
   return (
@@ -58,6 +64,7 @@ export default function ConnectCalendar() {
         <button
           type="submit"
           disabled={!isSignedIn}
+          onClick={nextPage}
           className="flex h-10 min-w-40 items-center justify-center gap-1 rounded-md bg-emerald-700 font-bold transition-colors hover:bg-emerald-600 disabled:border-zinc-500 disabled:bg-zinc-500 disabled:text-zinc-200"
         >
           Próximo passo <ArrowRight />
