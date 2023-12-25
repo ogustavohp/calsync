@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
 import './globals.css'
+import ProviderSession from '@/lib/ProviderSession'
 
 const roboto = Roboto({ weight: ['400', '700', '900'], subsets: ['latin'] })
 
@@ -16,9 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
-      <body className={`${roboto.className} bg-zinc-900 text-zinc-100`}>
-        <main className="">{children}</main>
-      </body>
+      <ProviderSession>
+        <body className={`${roboto.className} bg-zinc-900 text-zinc-100`}>
+          <main className="">{children}</main>
+        </body>
+      </ProviderSession>
     </html>
   )
 }
