@@ -105,7 +105,7 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          className="flex h-10 min-w-40 items-center justify-center rounded-md bg-emerald-700 font-bold"
+          className="flex h-10 min-w-40 items-center justify-center gap-1 rounded-md bg-emerald-700 font-bold"
           disabled={isSubmitting}
         >
           Próximo passo <ArrowRight />
