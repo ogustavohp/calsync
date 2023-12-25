@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
 import './globals.css'
-import ProviderSession from '@/lib/ProviderSession'
+import ProviderSession from '@/lib/auth/ProviderSession'
 
 const roboto = Roboto({ weight: ['400', '700', '900'], subsets: ['latin'] })
 
