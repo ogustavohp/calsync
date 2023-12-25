@@ -51,7 +51,7 @@ export default function ClaimUsernameForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex h-10 min-w-40 items-center justify-center rounded-md bg-emerald-700 font-bold"
+          className="flex h-10 min-w-40 items-center justify-center gap-1 rounded-md bg-emerald-700 font-bold"
         >
           Reservar usuário
           <ArrowRight />
