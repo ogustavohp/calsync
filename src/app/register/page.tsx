@@ -6,6 +6,8 @@ import { z } from 'zod'
 import React, { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSearchParams } from 'next/navigation'
+import { api } from '@/lib/axios'
+import { AxiosError } from 'axios'
 
 const registerFormSchema = z.object({
   username: z
@@ -40,8 +42,19 @@ export default function RegisterPage() {
     }
   }, [searchParams, setValue])
 
-  async function handleFormData(data: RegisterFormData) {
-    console.log(data)
+  async function handleRegister(data: RegisterFormData) {
+    try {
+      await api.post('/users', {
+        name: data.name,
+        username: data.username,
+      })
+    } catch (err) {
+      if (err instanceof AxiosError && err.response?.data.error) {
+        alert(err.response.data.error)
+        return
+      }
+      console.error(err)
+    }
   }
 
   return (
@@ -58,7 +71,7 @@ export default function RegisterPage() {
       </div>
       <form
         action=""
-        onSubmit={handleSubmit(handleFormData)}
+        onSubmit={handleSubmit(handleRegister)}
         className="mb-1 mt-4 flex h-auto flex-col gap-4 rounded-md border border-zinc-700 bg-zinc-800 p-4"
       >
         <label htmlFor="username" className="flex flex-col gap-2">
