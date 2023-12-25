@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import React, { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/lib/axios'
 import { AxiosError } from 'axios'
 
@@ -35,6 +35,7 @@ export default function RegisterPage() {
   })
 
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   useEffect(() => {
     if (searchParams.get('username')) {
@@ -48,6 +49,8 @@ export default function RegisterPage() {
         name: data.name,
         username: data.username,
       })
+
+      await router.push('/register/connect-calendar')
     } catch (err) {
       if (err instanceof AxiosError && err.response?.data.error) {
         alert(err.response.data.error)
