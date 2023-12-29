@@ -1,13 +1,13 @@
 'use client'
 import MultiStep from '@/components/MultiStep'
-import { Check } from 'lucide-react'
+import { Check, User } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-// import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-// import Image from 'next/image'
+import Image from 'next/image'
 import { api } from '@/lib/axios'
 
 const UpdateProfileFormSchema = z.object({
@@ -25,12 +25,14 @@ export default function UpdateProfilePage() {
   } = useForm<UpdateProfileFormData>({
     resolver: zodResolver(UpdateProfileFormSchema),
   })
-  // const router = useRouter()
+  const router = useRouter()
   const session = useSession()
 
   async function handleUpdateProfile(data: UpdateProfileFormData) {
     console.log('data')
     await api.put('/users/update-profile', data)
+
+    await router.push(`/schedule/${session.data?.user.username}`)
   }
 
   return (
@@ -50,24 +52,39 @@ export default function UpdateProfilePage() {
         onSubmit={handleSubmit(handleUpdateProfile)}
         className="mb-1 mt-4 flex h-auto flex-col gap-4 rounded-md border border-zinc-700 bg-zinc-800 p-4"
       >
-        {/* <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <span className="text-gray-100">Foto de perfil.</span>
-          <Image
-            width={400}
-            height={400}
-            src={session.data?.user.avatar_url}
-            alt={session.data?.user.name}
-          />
-        </div> */}
-        <span>Selecionar foto</span>
+          <div className="flex items-center gap-5">
+            {!session.data ? (
+              <User
+                width={100}
+                height={100}
+                className="rounded-full bg-zinc-500 p-2"
+              />
+            ) : (
+              <Image
+                width={100}
+                height={100}
+                quality={100}
+                src={session.data.user.avatar_url}
+                alt={session.data.user.name}
+                referrerPolicy="no-referrer"
+                className="rounded-full"
+              />
+            )}
+            <span className="rounded-lg border-2 border-emerald-600 p-2 text-emerald-500">
+              Selecionar foto
+            </span>
+          </div>
+        </div>
 
         <label htmlFor="bio" className="flex flex-col gap-2">
           <span className="text-gray-100">Sobre você</span>
-          <input
+          <textarea
             id="bio"
             placeholder="Sobre vc"
             {...register('bio')}
-            className="h-10 rounded-md bg-zinc-900 pl-2 focus:outline focus:ring-4 focus:ring-emerald-700"
+            className="h-20 rounded-md bg-zinc-900 pl-2 pt-2 focus:outline focus:ring-4 focus:ring-emerald-700"
           />
         </label>
         <p>Fale um pouco sobre você. Isto será exibido em sua página pessoal</p>
@@ -79,6 +96,9 @@ export default function UpdateProfilePage() {
           Finalizar <Check />
         </button>
       </form>
+      {errors.bio && (
+        <p className="mt-2 text-red-400">{errors.bio.root?.message}</p>
+      )}
     </div>
   )
 }
