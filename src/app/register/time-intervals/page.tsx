@@ -5,6 +5,7 @@ import { convertTimeStringToMinutes } from '@/utils/convert-time-string-to-minut
 import { getWeekDays } from '@/utils/get-week-days'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowRight, Check } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -77,12 +78,15 @@ export default function TimeIntervals() {
   const weekDay = getWeekDays()
 
   const intervals = watch('intervals')
+  const router = useRouter()
 
   // eslint-disable-next-line
   async function handleSetTimeIntervals(data: any) {
     const formData = data as TimeIntervalsFormOutput
 
     await api.post('users/time-intervals', formData)
+
+    await router.push('/register/update-profile')
   }
 
   return (
