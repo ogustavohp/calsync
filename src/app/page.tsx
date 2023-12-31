@@ -1,6 +1,13 @@
 import Image from 'next/image'
 import banner from '../assets/banner.png'
 import ClaimUsernameForm from '@/components/ClaimUsernameForm'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Descomplique sua agenda | CalSync',
+  description:
+    'Conecte seu calendário e permita que as pessoas marquem agendamentos no seu tempo livre.',
+}
 
 export default function Home() {
   return (
