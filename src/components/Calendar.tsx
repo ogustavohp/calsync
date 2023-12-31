@@ -1,23 +1,128 @@
+'use client'
+import '../lib/dayjs'
 import { getWeekDays } from '@/utils/get-week-days'
+import dayjs from 'dayjs'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 
-// const weekDays = ['DOM.', 'SEG.', 'TER.', 'QUA.', 'QUI.', 'SEX.', 'SÁB.']
+interface CalendarWeekType {
+  week: number
+  days: Array<{
+    date: dayjs.Dayjs
+    disabled: boolean
+  }>
+}
 
-export default function Calendar() {
+type CalendarWeeksType = CalendarWeekType[]
+
+interface CalendarProps {
+  selectedDate: Date | null
+  onDateSelected: (date: Date) => void
+}
+
+export default function Calendar({
+  selectedDate,
+  onDateSelected,
+}: CalendarProps) {
+  const [currentDate, setCurranteDate] = useState(() => {
+    return dayjs().set('date', 1)
+  })
+
+  function handlePreviousMonth() {
+    const previousMonthData = currentDate.subtract(1, 'month')
+    setCurranteDate(previousMonthData)
+  }
+
+  function handleNextMonth() {
+    const previousMonthData = currentDate.add(1, 'month')
+    setCurranteDate(previousMonthData)
+  }
+
   const shortWeekDays = getWeekDays({ short: true })
+
+  const currentMonth = currentDate.format('MMMM')
+  const currentYear = currentDate.format('YYYY')
+
+  const calendarWeeks = useMemo(() => {
+    const daysInMonthArray = Array.from({
+      length: currentDate.daysInMonth(),
+    }).map((_, i) => {
+      return currentDate.set('date', i + 1)
+    })
+    const firstWeekDay = currentDate.get('day')
+
+    const previousMonthFillArray = Array.from({
+      length: firstWeekDay,
+    })
+      .map((_, i) => {
+        return currentDate.subtract(i + 1, 'day')
+      })
+      .reverse()
+
+    const lastDayInCurrentMonth = currentDate.set(
+      'date',
+      currentDate.daysInMonth(),
+    )
+    const lastWeekDay = lastDayInCurrentMonth.get('day')
+
+    const nextMonthFillArray = Array.from({
+      length: 7 - (lastWeekDay + 1),
+    }).map((_, i) => {
+      return lastDayInCurrentMonth.add(i + 1, 'day')
+    })
+
+    const calendarDays = [
+      ...previousMonthFillArray.map((date) => {
+        return { date, disabled: true }
+      }),
+      ...daysInMonthArray.map((date) => {
+        return { date, disabled: date.endOf('day').isBefore(new Date()) }
+      }),
+      ...nextMonthFillArray.map((date) => {
+        return { date, disabled: true }
+      }),
+    ]
+
+    const calendarWeeks = calendarDays.reduce<CalendarWeeksType>(
+      (weeks, _, i, original) => {
+        const isNewWeek = i % 7 === 0
+        if (isNewWeek) {
+          weeks.push({
+            week: i / 7 + 1,
+            days: original.slice(i, i + 7),
+          })
+        }
+
+        return weeks
+      },
+      [],
+    )
+
+    return calendarWeeks
+  }, [currentDate])
+
+  console.log(calendarWeeks)
+
   return (
     <div className="flex flex-col gap-6 p-6">
       {/* header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg">
-          Dezembro <span className="text-zinc-400">2023</span>
+        <h2 className="text-lg capitalize">
+          {currentMonth} <span className="text-zinc-400">{currentYear}</span>
         </h2>
         <div className="flex gap-2 text-zinc-400">
-          <button className="cursor-pointer rounded leading-none transition-colors hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-gray-200">
+          <button
+            title="Previous month"
+            onClick={handlePreviousMonth}
+            className="cursor-pointer rounded leading-none transition-colors hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          >
             <ChevronLeft />
           </button>
-          <button className="cursor-pointer rounded leading-none transition-colors hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-gray-200">
+          <button
+            title="Next month"
+            onClick={handleNextMonth}
+            className="cursor-pointer rounded leading-none transition-colors hover:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          >
             <ChevronRight />
           </button>
         </div>
@@ -32,30 +137,25 @@ export default function Calendar() {
           </tr>
         </thead>
         <tbody className="before:block before:text-zinc-900 before:content-['.']">
-          <tr>
-            <td className="box-border"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-              <button className="aspect-square w-full cursor-pointer rounded-md bg-zinc-600 hover:bg-zinc-500 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:cursor-default disabled:bg-zinc-800 disabled:opacity-40">
-                1
-              </button>
-            </td>
-            <td>
-              <button
-                disabled
-                className="aspect-square w-full cursor-pointer rounded-md bg-zinc-600 hover:bg-zinc-500 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:cursor-default disabled:bg-zinc-800 disabled:opacity-40"
-              >
-                2
-              </button>
-            </td>
-            <td>
-              <button className="aspect-square w-full cursor-pointer rounded-md bg-zinc-600 hover:bg-zinc-500 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:cursor-default disabled:bg-zinc-800 disabled:opacity-40">
-                3
-              </button>
-            </td>
-          </tr>
+          {calendarWeeks.map(({ week, days }) => {
+            return (
+              <tr key={week}>
+                {days.map((day) => {
+                  return (
+                    <td key={day.date.toString()}>
+                      <button
+                        onClick={() => onDateSelected(day.date.toDate())}
+                        disabled={day.disabled}
+                        className="aspect-square w-full cursor-pointer rounded-md bg-zinc-600 hover:bg-zinc-500 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:cursor-default disabled:bg-zinc-800 disabled:opacity-40"
+                      >
+                        {day.date.get('date')}
+                      </button>
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>
