@@ -1,5 +1,7 @@
 'use client'
+import '@/lib/dayjs'
 import { zodResolver } from '@hookform/resolvers/zod'
+import dayjs from 'dayjs'
 import { Calendar, Clock } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
@@ -15,7 +17,15 @@ const confirmFormSchema = z.object({
 
 type ConfirmFormData = z.infer<typeof confirmFormSchema>
 
-export function ConfirmStep() {
+interface ConfirmStepProps {
+  schedulingDate: Date
+  onCancelConfirmation: () => void
+}
+
+export function ConfirmStep({
+  schedulingDate,
+  onCancelConfirmation,
+}: ConfirmStepProps) {
   const {
     register,
     handleSubmit,
@@ -28,6 +38,9 @@ export function ConfirmStep() {
     console.log(data)
   }
 
+  const describedDate = dayjs(schedulingDate).format('DD[ de ]MMMM[ de ]YYYY')
+  const describedTime = dayjs(schedulingDate).format('HH:mm[h]')
+
   return (
     <form
       onSubmit={handleSubmit(handleConfirmScheduling)}
@@ -37,11 +50,11 @@ export function ConfirmStep() {
       <div className="flex gap-4">
         <p className="flex items-center gap-2">
           <Calendar />
-          26 de Setembro de 2022
+          {describedDate}
         </p>
         <p className="flex items-center gap-2">
           <Clock />
-          18:00h
+          {describedTime}
         </p>
       </div>
 
@@ -83,6 +96,7 @@ export function ConfirmStep() {
       <div className="flex justify-end gap-2">
         <button
           type="button"
+          onClick={onCancelConfirmation}
           className="rounded-md px-6 py-3 text-base outline-none transition-colors hover:text-zinc-300 focus:border-none focus:outline focus:ring-4 focus:ring-emerald-700"
         >
           Cancelar
