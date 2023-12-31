@@ -3,6 +3,7 @@ import '@/lib/dayjs'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
 import ProviderSession from '@/lib/auth/ProviderSession'
+import ReactQueryProvider from '@/lib/ReactQueryProvider'
 
 const roboto = Roboto({ weight: ['400', '700', '900'], subsets: ['latin'] })
 
@@ -18,11 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
-      <ProviderSession>
-        <body className={`${roboto.className} bg-zinc-900 text-zinc-100`}>
-          <main className="">{children}</main>
-        </body>
-      </ProviderSession>
+      <ReactQueryProvider>
+        <ProviderSession>
+          <body className={`${roboto.className} bg-zinc-900 text-zinc-100`}>
+            <main className="">{children}</main>
+          </body>
+        </ProviderSession>
+      </ReactQueryProvider>
     </html>
   )
 }
