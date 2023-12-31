@@ -1,3 +1,4 @@
 {
-  "extends": ["next/core-web-vitals", "@ogustavohp/eslint-config/next-node"]
+  "extends": ["next/core-web-vitals", "@ogustavohp/eslint-config/next-node"],
+  "rules": {"camelcase": "off"}
 }
