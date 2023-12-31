@@ -12,7 +12,11 @@ interface AvailabilityType {
   availableTimes: number[]
 }
 
-export function CalendarStep() {
+interface CalendarStepProps {
+  onSelectDateTime: (date: Date) => void
+}
+
+export function CalendarStep({ onSelectDateTime }: CalendarStepProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   // const [availability, setAvailability] = useState<AvailabilityType | null>(
   //   null,
@@ -46,6 +50,14 @@ export function CalendarStep() {
     enabled: !!selectedDate,
   })
 
+  function handleSelectTime(hour: number) {
+    const dateWithTime = dayjs(selectedDate)
+      .set('hour', hour)
+      .startOf('hour')
+      .toDate()
+
+    onSelectDateTime(dateWithTime)
+  }
   return (
     <div
       className={`relative mx-auto mb-0 mt-6 grid max-w-full rounded-md border border-zinc-700 bg-zinc-800 ${
@@ -67,6 +79,7 @@ export function CalendarStep() {
               return (
                 <button
                   key={hour}
+                  onClick={() => handleSelectTime(hour)}
                   disabled={!availability.availableTimes.includes(hour)}
                   className="cursor-pointer rounded-lg border-0 bg-zinc-700 py-2 text-base text-gray-200 last:mb-6 hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:cursor-default disabled:bg-zinc-800 disabled:opacity-40"
                 >
