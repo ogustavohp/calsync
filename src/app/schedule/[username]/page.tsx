@@ -3,6 +3,19 @@ import { prisma } from '@/lib/prisma'
 import { User } from 'lucide-react'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
+
+type Props = {
+  params: { username: string }
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const username = params.username
+
+  return {
+    title: `Agendar com ${username} | CalSync`,
+  }
+}
 
 interface ScheduleProps {
   username: string
