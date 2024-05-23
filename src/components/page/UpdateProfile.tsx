@@ -29,7 +29,7 @@ export default function UpdateProfile() {
   const session = useSession()
 
   async function handleUpdateProfile(data: UpdateProfileFormData) {
-    console.log('data')
+    // console.log('data')
     await api.put('/users/update-profile', data)
 
     await router.push(`/schedule/${session.data?.user.username}`)

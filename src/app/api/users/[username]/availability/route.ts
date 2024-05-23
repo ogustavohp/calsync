@@ -1,6 +1,9 @@
 import { prisma } from '@/lib/prisma'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 import { NextRequest, NextResponse } from 'next/server'
+
+dayjs.extend(utc)
 
 export async function GET(request: NextRequest) {
   // console.log(request.nextUrl)
@@ -15,8 +18,9 @@ export async function GET(request: NextRequest) {
     .toString()
 
   const date = request.nextUrl.searchParams.get('date')
+  const timezoneOffSet = request.nextUrl.searchParams.get('timezoneOffSet')
 
-  if (!date) {
+  if (!date || !timezoneOffSet) {
     return NextResponse.json({ error: 'Date not provided.' }, { status: 400 })
   }
 
@@ -35,6 +39,14 @@ export async function GET(request: NextRequest) {
 
   const referenceDate = dayjs(String(date))
   const isPastDate = referenceDate.endOf('day').isBefore(new Date())
+
+  const timezoneOffSetInHours =
+    typeof timezoneOffSet === 'string'
+      ? Number(timezoneOffSet) / 60
+      : Number(timezoneOffSet[0]) / 60
+
+  const referenceDateTimeZoneOffSetInHours =
+    referenceDate.toDate().getTimezoneOffset() / 60
 
   if (isPastDate) {
     return NextResponse.json({ possibleTimes: [], availableTimes: [] })
@@ -65,18 +77,28 @@ export async function GET(request: NextRequest) {
     where: {
       user_id: user.id,
       date: {
-        gte: referenceDate.set('hour', startHour).toDate(),
-        lte: referenceDate.set('hour', endHour).toDate(),
+        gte: referenceDate
+          .set('hour', startHour)
+          .add(timezoneOffSetInHours, 'hours')
+          .toDate(),
+        lte: referenceDate
+          .set('hour', endHour)
+          .add(timezoneOffSetInHours, 'hours')
+          .toDate(),
       },
     },
   })
 
   const availableTimes = possibleTimes.filter((time) => {
     const isTimeBlocked = blockedTimes.some(
-      (blockedTime) => blockedTime.date.getHours() === time,
+      (blockedTime) =>
+        blockedTime.date.getUTCHours() - timezoneOffSetInHours === time,
     )
 
-    const isTimeInPast = referenceDate.set('hour', time).isBefore(new Date())
+    const isTimeInPast = referenceDate
+      .set('hour', time)
+      .subtract(referenceDateTimeZoneOffSetInHours, 'hours')
+      .isBefore(dayjs().utc().subtract(timezoneOffSetInHours, 'hours'))
 
     return !isTimeBlocked && !isTimeInPast
   })

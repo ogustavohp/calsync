@@ -17,8 +17,8 @@ export async function PUT(req: NextRequest) {
 
   const { bio } = updateProfileSchema.parse(body)
 
-  console.log(session)
-  console.log(bio)
+  // console.log(session)
+  // console.log(bio)
   await prisma.user.update({
     where: {
       id: session.user.id,

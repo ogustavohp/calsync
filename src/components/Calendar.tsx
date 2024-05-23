@@ -135,7 +135,7 @@ export default function Calendar({ onDateSelected }: CalendarProps) {
     return calendarWeeks
   }, [currentDate, blockedDates])
 
-  console.log(calendarWeeks)
+  // console.log(calendarWeeks)
 
   return (
     <div className="flex flex-col gap-6 p-6">
