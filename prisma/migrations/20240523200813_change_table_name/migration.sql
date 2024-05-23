@@ -40,14 +40,14 @@ CREATE TABLE "sessions" (
 );
 
 -- CreateTable
-CREATE TABLE "user_time_interval" (
+CREATE TABLE "user_time_intervals" (
     "id" TEXT NOT NULL,
     "week_day" INTEGER NOT NULL,
     "time_start_in_minutes" INTEGER NOT NULL,
     "time_end_in_minutes" INTEGER NOT NULL,
     "user_id" TEXT NOT NULL,
 
-    CONSTRAINT "user_time_interval_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "user_time_intervals_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -82,7 +82,7 @@ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_time_interval" ADD CONSTRAINT "user_time_interval_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "user_time_intervals" ADD CONSTRAINT "user_time_intervals_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "schedulings" ADD CONSTRAINT "schedulings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
