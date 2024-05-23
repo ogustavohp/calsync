@@ -4,6 +4,23 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 First, run the development server:
 
+Docker
+```bash
+docker run --name postgres -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres
+```
+.env
+```bash
+DATABASE_URL="postgresql://postgres:docker@localhost:5432/name"
+DATABASE_DIRECT_URL="postgresql://postgres:docker@localhost:5432/name"
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+NEXTAUTH_SECRET=""
+```
+
+```bash
+npx prisma migrate dev
+```
+
 ```bash
 npm run dev
 # or
@@ -13,6 +30,7 @@ pnpm dev
 # or
 bun dev
 ```
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
