@@ -19,7 +19,6 @@ interface CalendarWeekType {
 type CalendarWeeksType = CalendarWeekType[]
 
 interface CalendarProps {
-  selectedDate: Date | null
   onDateSelected: (date: Date) => void
 }
 
@@ -28,10 +27,7 @@ interface BlockedDatesType {
   blockedDates: number[]
 }
 
-export default function Calendar({
-  selectedDate,
-  onDateSelected,
-}: CalendarProps) {
+export default function Calendar({ onDateSelected }: CalendarProps) {
   const [currentDate, setCurranteDate] = useState(() => {
     return dayjs().set('date', 1)
   })

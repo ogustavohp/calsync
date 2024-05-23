@@ -66,7 +66,7 @@ export function CalendarStep({ onSelectDateTime }: CalendarStepProps) {
           : 'col-span-1 w-[540px]'
       }`}
     >
-      <Calendar selectedDate={selectedDate} onDateSelected={setSelectedDate} />
+      <Calendar onDateSelected={setSelectedDate} />
 
       {isDateSelected && (
         <div className="absolute bottom-0 right-0 top-0 w-[280px] overflow-y-scroll border-l border-zinc-700 px-6 pt-6">
